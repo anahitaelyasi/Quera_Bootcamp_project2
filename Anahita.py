@@ -13,7 +13,7 @@ phone_names = [
     "Samsung - Galaxy A15 5G 128GB (Unlocked) - Blue Black",
     "Apple iPhone 14 Pro Max 256GB Fully Unlocked Purple - Grade B",
     "Samsung Galaxy A55",
-    "iPhone 13 Pro Max 5G 128GB",
+    "iPhone 13 Pro Max 5G 128GB", 
     "SAMSUNG Galaxy S24 Ultra Cell Phone 256GB AI Smartphone Unlocked Android 200MP 100x Zoom Cameras",
     "Apple iPhone 11 A13 Bionic 4GB, 64GB 6.1inch iOS A GRADE Red (Unlocked) Refurbished",
     "Apple iPhone 12 128GB GSM/CDMA Fully Unlocked - Blue",
@@ -54,7 +54,10 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         except Exception as exc:
             price = 'Error'
             print(f'{phone_name} generated an exception: {exc}')
-        phone_info[phone_name] = {'Price': price}
+        phone_info[phone_name] = {'Price': price} 
+
+        df.loc[df['Phone names'] == phone_name, 'Price'] = price
 
 
-print(phone_info)
+
+print(df)
