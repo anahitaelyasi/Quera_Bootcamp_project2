@@ -1,33 +1,60 @@
-from bs4 import BeautifulSoup
+import pandas as pd
 import requests
-import pandas 
-import re
+from bs4 import BeautifulSoup
+import concurrent.futures
 
-common_urls = ["https://tellstar.ir/product/%DA%AF%D9%88%D8%B4%DB%8C-%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84--%D9%85%D8%AF%D9%84-Galaxy-A55-%D8%B8%D8%B1%D9%81%DB%8C%D8%AA-128-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA-%D8%B1%D9%85-8-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA-|-5G" ,
-        "https://tellstar.ir/product/samsung-galaxy-s24-ultra-256-12-5g-%DA%AF%D9%88%D8%B4%DB%8C-%D8%B3%D8%A7%D9%85%D8%B3%D9%88%D9%86%DA%AF-%DA%AF%D9%84%DA%A9%D8%B3%DB%8C-%D8%A7%D8%B3-24-%D8%A7%D9%88%D9%84%D8%AA%D8%B1%D8%A7-256-12-5" ,
-        "https://tellstar.ir/product/samsung-galaxy-a15-5g-256-8-gb-%DA%AF%D9%88%D8%B4%DB%8C-%D8%B3%D8%A7%D9%85%D8%B3%D9%88%D9%86%DA%AF-%DA%AF%D9%84%DA%A9%D8%B3%DB%8C-%D8%A215-256-8-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA" ,
-        "https://tellstar.ir/product/xiaomi-note-13-pro-5g-512-12-%DA%AF%D9%88%D8%B4%DB%8C-%D8%B4%DB%8C%D8%A7%D8%A6%D9%88%D9%85%DB%8C-%D9%86%D9%88%D8%AA-13-%D9%BE%D8%B1%D9%88-%D8%AD%D8%A7%D9%81%D8%B8%D9%87-512-%D8%B1%D9%85-12-%DA%AF",
-        "https://tellstar.ir/product/128-4-Xiaomi-Redmi-A3_-%D8%B4%DB%8C%D8%A7%D8%A6%D9%88%D9%85%DB%8C--%D8%B1%D8%AF%D9%85%DB%8C-%D8%A2-%D8%B3%D9%87--128-%D8%B1%D8%A7%D9%85-4",
-        "https://tellstar.ir/product/Apple-iPhone-13-(Not-Active)-128-4GB---%DA%AF%D9%88%D8%B4%DB%8C-%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84-%D8%A7%D9%BE%D9%84-%D8%A7%DB%8C%D9%81%D9%88%D9%86-13%D8%AD%D8%A7%D9%81%D8%B8%D9%87--128-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA-%D8%B1%D9%85-4-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA--%D9%86%D8%A7%D8%AA-%D8%A7%DA%A9%D8%AA%DB%8C%D9%88-"
-        ] 
+# List of phone names
+phone_names = [
+    "Samsung Galaxy S24 Ultra STANDARD EDITION DUAL SIM 512GB ROM + 12GB RAM (GSM | CDMA) Factory Unlocked 5G Smartphone (Titanium Black)",
+    "Motorola Moto G Play 2023 3GB/32GB 16MP Camera - Navy Blue",
+    "OnePlus 12 12GB RAM+256GB Dual-SIM Unlocked Android Smartphone Supports Fastest 50W Wireless Charging",
+    "Samsung Galaxy A34 EE DUAL SIM 128GB ROM + 6GB RAM (GSM Only | No CDMA) Factory Unlocked 5G Smartphone",
+    "Xiaomi 14 Ultra DUAL SIM 512GB ROM + 16GB RAM (GSM | CDMA) Factory Unlocked 5G Smartphone (White)",
+    "Samsung - Galaxy A15 5G 128GB (Unlocked) - Blue Black",
+    "Apple iPhone 14 Pro Max 256GB Fully Unlocked Purple - Grade B",
+    "Samsung Galaxy A55",
+    "iPhone 13 Pro Max 5G 128GB",
+    "SAMSUNG Galaxy S24 Ultra Cell Phone 256GB AI Smartphone Unlocked Android 200MP 100x Zoom Cameras",
+    "Apple iPhone 11 A13 Bionic 4GB, 64GB 6.1inch iOS A GRADE Red (Unlocked) Refurbished",
+    "Apple iPhone 12 128GB GSM/CDMA Fully Unlocked - Blue",
+    "Samsung Galaxy S22 Ultra 5G 128GB Fully Unlocked SM-S908 (2022) - Red - Good Condition"
+]
 
-phone_data = [] 
+# DataFrame
+df = pd.DataFrame(phone_names, columns=["Phone names"])
 
-def scrape_tellstar(url) : 
+# Function to scrape Newegg
+def scrape_newegg(phone_name):
+    url = f"https://www.newegg.com/p/pl?d={phone_name.replace(' ', '+')}"
     response = requests.get(url)
-    soup = BeautifulSoup(response.content,'html.parser')
-    pattern = re.compile(r'([A-Za-z0-9\s]+[A-Za-z0-9\s\/]*)') 
-    phone_name = soup.find_all('h5',class_="font-16")[0].text.replace(' ','') 
-    phone_price = soup.find_all('span',{"id":"product_off_price" , "class" : "main-color-one-color"})[0].text.replace(' ','') 
-    find_phone_name = pattern.findall(phone_name)[0]
-    phone_data.append(find_phone_name)
-    phone_data.append(phone_price)
-    #phone_name['Name'] = find_phone_name
-    #phone_data['Price'] = phone_price 
+    soup = BeautifulSoup(response.content, 'html.parser')
+    product_link_tag = soup.find('a', class_='item-title')
+
+    if product_link_tag:
+        product_link = product_link_tag['href']
+        response2 = requests.get(product_link)
+        soup2 = BeautifulSoup(response2.content, 'html.parser')
+        price_tag = soup2.find('li', class_='price-current')
+
+        if price_tag:
+            return price_tag.text.strip()
+    
+    return 'N/A'
+
+# Dictionary to hold phone information
+phone_info = {}
+
+# Using ThreadPoolExecutor for concurrent execution
+with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    future_to_phone = {executor.submit(scrape_newegg, phone_name): phone_name for phone_name in phone_names}
+    for future in concurrent.futures.as_completed(future_to_phone):
+        phone_name = future_to_phone[future]
+        try:
+            price = future.result()
+        except Exception as exc:
+            price = 'Error'
+            print(f'{phone_name} generated an exception: {exc}')
+        phone_info[phone_name] = {'Price': price}
 
 
-
-for url in common_urls :
-    phone_info = scrape_tellstar(url) 
-
-print(phone_data) 
+print(phone_info)
