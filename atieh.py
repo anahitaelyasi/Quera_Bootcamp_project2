@@ -10,17 +10,18 @@ phone_names = [
     "Apple iPhone 14 Pro Max 256GB Fully Unlocked Purple - Grade B",
     "Samsung Galaxy A55",
     "Samsung Galaxy S24 Ultra STANDARD EDITION DUAL SIM 512GB ROM + 12GB RAM (GSM | CDMA) Factory Unlocked 5G Smartphone (Titanium Black)",
-    "Motorola Moto G Play 2023 3GB/32GB 16MP Camera - Navy Blue",
+    "Motorola Moto G Play 2023 3GB/32GB 16MP Camera",
     "OnePlus 12 12GB RAM+256GB Dual-SIM Unlocked Android Smartphone Supports Fastest 50W Wireless Charging",
     "Samsung Galaxy A34 EE DUAL SIM 128GB ROM + 6GB RAM (GSM Only | No CDMA) Factory Unlocked 5G Smartphone",
     "Xiaomi 14 Ultra DUAL SIM 512GB ROM + 16GB RAM (GSM | CDMA) Factory Unlocked 5G Smartphone (White)",
     "Samsung - Galaxy A15 5G 128GB (Unlocked) - Blue Black",
-    "Apple iPhone 14 Pro Max 256GB Fully Unlocked Purple - Grade B",
+    "Apple iPhone 15 Pro Max, 6.7 OLED Super Retina XDR Display, A17 Pro Chip, 6-Core CPU, 6-Core GPU, 256GB Storage, 5G / Wi-Fi 6E / Bluetooth 5.3, Face ID, TRA Version, Natural Titanium | S300856271",
     "Motorola Moto G Play 2023 3GB/32GB 16MP Camera - Navy Blue",
     "HUAWEI nova 10 Dual Sim Smartphone, 6.67 Curved OLED Display, 8GB RAM 256 GB Storage, LTE 4G, 60 MP Front Ultra Wide Camera, "
     "HUAWEI nova 11i SmartPhone, 6.8 FullView Display, 94.9 Screen-to-Body Ratio, 8GB+128GB, 40W SuperCharge, 5000 mAh Battery"
     "vivo V30 5G (Noble Black, 12GB+12GB RAM, 512GB)"
-    "Samsung Galaxy Z Flip6 AI Smartphone, 6.7 FHD+ AMOLED 2X Display, Octa-Core CPU, 12GB RAM, 512GB Storage, 50MP Camera, Dual-SIM - 5G Network"
+    "Samsung Galaxy Z Flip6 AI Smartphone, 6.7 FHD+ AMOLED 2X Display, Octa-Core CPU, 12GB RAM, 512GB Storage, 50MP Camera, Dual-SIM - 5G Network",
+    "HUAWEI nova 10 Pro Dual SIM Smartphone, 6.7 120 Hz Curved Display, Star Orbit Ring Design, 8GB RAM, 256GB Storage, 4G LTE Network, 60 MP/50MP Camera, 4500 mAh Battery, Starry Black | 51097EWH"
 ]
 
 df = pd.DataFrame(phone_names, columns=["Phone names"])
