@@ -13,7 +13,7 @@ commom_phones = ["Motorola Moto G Play 2023 3GB/32GB 16MP Camera - Navy Blue",
                 "Apple iPhone 14 Pro Max 256GB Fully Unlocked Purple - Grade B",
                 "Samsung Galaxy A55"
 ]
-
+# www.newegg.com
 only_newegg = [
     "iPhone 13 Pro Max 5G 128GB", 
     "SAMSUNG Galaxy S24 Ultra Cell Phone 256GB AI Smartphone Unlocked Android 200MP 100x Zoom Cameras",
@@ -21,7 +21,7 @@ only_newegg = [
     "Apple iPhone 12 128GB GSM/CDMA Fully Unlocked - Blue",
     "Samsung Galaxy S22 Ultra 5G 128GB Fully Unlocked SM-S908 (2022) - Red - Good Condition"
 ] 
-
+# microless.com
 only_microless = [
     "Samsung Galaxy A15 5G Dual SIM, 4GB RAM, 128GB Storage, Blue Black (UAE Version)",
     "Apple iPhone 15 Pro Max",
