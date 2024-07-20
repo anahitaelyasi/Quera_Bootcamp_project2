@@ -7,7 +7,7 @@ import concurrent.futures
 
 phone_names = [
     "Samsung Galaxy A15 5G Dual SIM, 4GB RAM, 128GB Storage, Blue Black (UAE Version)",
-    "Apple iPhone 14 Pro Max, 6.7 Super Retina XDR Display, A16 Bionic Chip, 6GB RAM, 256GB Storage, Physical Sim & e-Sim, 5G Network, Face ID, 48+12+12 MP Camera, Japan Version, Purple | JP14MX256P",
+    "Apple iPhone 14 Pro Max 256GB Purple"
     "Samsung Galaxy A55",
     "Samsung Galaxy S24 Ultra, 512GB, Black, 12GB RAM, Android Smartphone, 200MP Camera, (International Version)",
     "Motorola Moto G Play 2023 3GB/32GB 16MP Camera",
@@ -51,4 +51,3 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         phone_info[phone_name] = {'Price': price}
         df.loc[df['Phone names'] == phone_name, 'Price'] = price    
 print(df)  
- 
