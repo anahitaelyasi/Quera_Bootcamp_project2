@@ -4,6 +4,7 @@ import pandas as pd
 # Step 1 --> Create Dataset
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 commom_phones = ["Motorola Moto G Play 2023 3GB/32GB 16MP Camera - Navy Blue",
                 "Samsung Galaxy S24 Ultra STANDARD EDITION DUAL SIM 512GB ROM + 12GB RAM (GSM | CDMA) Factory Unlocked 5G Smartphone (Titanium Black)",
                 "OnePlus 12 12GB RAM+256GB Dual-SIM Unlocked Android Smartphone Supports Fastest 50W Wireless Charging",
