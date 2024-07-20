@@ -14,6 +14,7 @@ phone_names = [
     "OnePlus 12 5G Dual Sim Mobile Phone, 6.8 QHD+ ProXDR 120Hz Display, 12GB RAM, 256GB Storage, Snapdragon 8 Gen 3 Chipset, 50mp+64mp+48mp Main Camera, 32mp Selfie Camera, Silky Black | OP1212R256S",
     "Samsung Galaxy A34 Dual SIM Smartphone, 6.6 Super AMOLED Display, 6GB RAM, 128GB Storage, LTE 4G / 5G, 48 MP /13 MP Camera, 5000mAh Battery, UAE Version, Awesome Lime",
     "Xiaomi 14 Ultra Dual SIM 5G 512GB 16GB 5G White - Chines Version",
+
     "Samsung Galaxy A15 5G Dual SIM, 4GB RAM, 128GB Storage, Blue Black (UAE Version)",
     "Apple iPhone 15 Pro Max",
     "HUAWEI nova 10 Dual Sim Smartphone, 6.67 Curved OLED Display, 8GB RAM 256 GB Storage, LTE 4G, 60 MP Front Ultra Wide Camera",
