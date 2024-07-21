@@ -20,11 +20,11 @@ common_phones = [
     "Xiaomi 14 Ultra Dual SIM 5G 512GB 16GB 5G White",
 ]
 only_microless = [
-    "Apple iPhone 15 Pro Max 256GB Storage Natural Titanium",
+    "Apple iPhone 15 Pro Max, 6.7 OLED Super Retina XDR Display A17 Pro Chip  256GB Storage Bluetooth 5.3 Face ID TRA Version Natural Titanium",
     "HUAWEI nova 10 Dual Sim Smartphone, 6.67 Curved OLED Display, 8GB RAM 256 GB Storage, LTE 4G, 60 MP Front Ultra Wide Camera",
-    "HUAWEI nova 11i SmartPhone",
-    "vivo V30 5G",
-    "Samsung Galaxy Z Flip6 AI Smartphone",
+    "HUAWEI nova 11i SmartPhone 8GB 128GB Starry Black",
+    "vivo V30 5G Noble Black 12GB 12GB RAM 512GB",
+    "Samsung Galaxy Z Flip6 AI Smartphone 12GB RAM 512GB Storage Silver Shadow",
 ]
 only_newegg = [
     "Apple iPhone 13 Pro Max, 128GB, Graphite - Unlocked",

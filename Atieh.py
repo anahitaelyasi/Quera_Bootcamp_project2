@@ -22,10 +22,12 @@ phone_names = [
     "vivo V30 5G (Noble Black, 12GB+12GB RAM, 512GB)",
     "Samsung Galaxy Z Flip6 AI Smartphone",
     "HUAWEI nova 10 Pro Dual SIM Smartphone, 6.7 120 Hz Curved Display, Star Orbit Ring Design, 8GB RAM, 256GB Storage, 4G LTE Network, 60 MP/50MP Camera, 4500 mAh Battery, Starry Black | 51097EWH"
-]
+] 
 
 df = pd.DataFrame(phone_names, columns=["Phone names"])
+
 def global_microless(phone_name):
+
     url = f"https://global.microless.com/search/?query={phone_name.replace(' ', '+')}"
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser') 
@@ -38,7 +40,9 @@ def global_microless(phone_name):
         price_tag = soup2.find('div', class_='product-main-price') 
 
         return price_tag.text.strip()   
+    
 phone_info = {}
+
 with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
     future_to_phone = {executor.submit(global_microless, phone_name): phone_name for phone_name in phone_names}
     for future in concurrent.futures.as_completed(future_to_phone):
