@@ -120,13 +120,34 @@ df['Microless Price'] = pd.to_numeric(df['Microless Price'].str.replace('[$,]', 
 #df = pd.concat([df,new_df],ignore_index=True)
 for i, row in df.iterrows():
     if pd.isna(row['Newegg Price']) and pd.isna(row['Microless Price']):
-        df.at[i, 'Min price'] = '_'
+        df.at[i, 'Min price(Shops)'] = '_'
     elif pd.notna(row['Newegg Price']) and pd.isna(row['Microless Price']):
-        df.at[i, 'Min price'] = row['Newegg Price']
+        df.at[i, 'Min price(Shops)'] = row['Newegg Price']
     elif pd.isna(row['Newegg Price']) and pd.notna(row['Microless Price']):
-        df.at[i, 'Min price'] = row['Microless Price']
+        df.at[i, 'Min price(Shops)'] = row['Microless Price']
     else:
-        df.at[i, 'Min price'] = min(row['Newegg Price'], row['Microless Price'])
+        df.at[i, 'Min price(Shops)'] = min(row['Newegg Price'], row['Microless Price'])
+def calculate_cp(min_price):
+    if min_price == '_':
+        return 1000
+    else:
+        return min_price * 0.55
+
+df['cp(min)'] = df['Min price(Shops)'].apply(lambda x: calculate_cp(x) if x != '_' else 1000)
+cs=5
+cm=10
+P=1.1
+def calculate_base_price(cp):
+    return (cp + 15)
+def sell_price(cp):
+    return ((cp + 15) * 1.1)
+df['base price'] = df['cp(min)'].apply(sell_price)
+df['sell price'] = df['base price'].apply(sell_price)
+def is_competitive(row):
+    if row['Min price(Shops)'] == '_':
+        return 'No'
+    return 'Yes' if row['cp(min)'] <= row['sell price'] <= row['Min price(Shops)'] else 'No'
+df['competitive'] = df.apply(is_competitive, axis=1)
 
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
     print(df)
