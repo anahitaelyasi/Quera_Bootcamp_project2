@@ -3,12 +3,74 @@ import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
 
-# Step 1 -- > Create a database
-#------------------------------------------------------------------------------------------
-#------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------
+# ------------------------------------------------------------------
+def scrape_newegg(phone_name):
+    url = f"https://www.newegg.com/p/pl?d={phone_name.replace(' ', '+')}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    product_link_tag = soup.find('a', class_='item-title')
+    if product_link_tag:
+        product_link = product_link_tag['href']
+        response2 = requests.get(product_link)
+        soup2 = BeautifulSoup(response2.content, 'html.parser')
+        price_tag = soup2.find('li', class_='price-current')
+        if price_tag:
+            return price_tag.text.strip()
+    return 'N/A'
 
 
-# Define phone lists
+def scrape_microless(phone_name):
+    url = f"https://global.microless.com/search/?query={phone_name.replace(' ', '+')}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    product_link_tag = soup.find('div', class_='product-title').find('a')
+    if product_link_tag:
+        product_link = product_link_tag['href']
+        response2 = requests.get(product_link)
+        soup2 = BeautifulSoup(response2.content, 'html.parser')
+        price_tag = soup2.find('div', class_='product-main-price')
+        if price_tag:
+            return price_tag.text.strip()
+    return 'N/A'
+
+
+def scrape_phone_data(phone_name):
+    newegg_price = scrape_newegg(phone_name)
+    microless_price = scrape_microless(phone_name)
+    return phone_name, newegg_price, microless_price
+
+
+def calculate_cp(min_price):
+    if min_price == '_':
+        return 1000
+    else:
+        return min_price * 0.55
+
+
+def calculate_base_price(cp):
+    return cp + 15
+    # cs=10
+    # cm=5
+
+
+def sell_price(cp):
+    return (cp + 15) * 1.1
+    # cs=10
+    # cm=5
+    # P = 10%
+
+
+def is_competitive(row):
+    if row['Min price(Shops)'] == '_':
+        return 'No'
+    return 'Yes' if row['cp(min)'] <= row['sell price'] <= row['Min price(Shops)'] else 'No'
+
+
+# ------------------------------------------------------------------
+# ------------------------------------------------------------------
+
 common_phones = [
     "Samsung Galaxy A15 5G 128GB Blue Black",
     "Apple iPhone 14 Pro Max 256GB Purple",
@@ -39,85 +101,24 @@ new_products = [
     "Sony Ericsson Xperia X10 Mini E10i",
     "ASUS Phone ZA550KL-S425-1G16G-BK Zenfone Live L1 5.45 1GB 16GB Black Retail"
 ]
-
-
 # Combine all phones into one list
 phone_names = common_phones + only_newegg + only_microless + new_products
 
+# ------------------------------------------------------------------
+# ------------------------------------------------------------------
 # DataFrame
 df = pd.DataFrame(phone_names, columns=["Phone names"])
 df["Newegg Price"] = "0"
 df["Microless Price"] = "0"
-
-
-# Step 2 -- > Define functions to scrape the websites
-#------------------------------------------------------------------------------------------
-#------------------------------------------------------------------------------------------
-
-
-# Scraping newegg.com
-def scrape_newegg(phone_name):
-    url = f"https://www.newegg.com/p/pl?d={phone_name.replace(' ', '+')}"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    product_link_tag = soup.find('a', class_='item-title')
-
-    if product_link_tag:
-        product_link = product_link_tag['href']
-        response2 = requests.get(product_link)
-        soup2 = BeautifulSoup(response2.content, 'html.parser')
-        price_tag = soup2.find('li', class_='price-current')
-
-        if price_tag:
-            return price_tag.text.strip()
-
-    return 'N/A'
-
-#Scraping microless.com
-def scrape_microless(phone_name):
-    url = f"https://global.microless.com/search/?query={phone_name.replace(' ', '+')}"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    product_link_tag = soup.find('div', class_='product-title').find('a')
-
-    if product_link_tag:
-        product_link = product_link_tag['href']
-        response2 = requests.get(product_link)
-        soup2 = BeautifulSoup(response2.content, 'html.parser')
-        price_tag = soup2.find('div', class_='product-main-price')
-
-        if price_tag:
-            return price_tag.text.strip()
-
-    return 'N/A'
-
-# Function to handle scraping based on phone list categories
-def scrape_phone_data(phone_name):
-    newegg_price = scrape_newegg(phone_name)
-    microless_price = scrape_microless(phone_name)
-    return phone_name, newegg_price, microless_price
-
-# Concurrent execution for scraping
 with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
     future_to_phone = {executor.submit(scrape_phone_data, phone_name): phone_name for phone_name in phone_names}
     for future in concurrent.futures.as_completed(future_to_phone):
         phone_name, newegg_price, microless_price = future.result()
         df.loc[df['Phone names'] == phone_name, 'Newegg Price'] = newegg_price
         df.loc[df['Phone names'] == phone_name, 'Microless Price'] = microless_price
-
-
 # Cleaning price columns and converting to numeric
 df['Newegg Price'] = pd.to_numeric(df['Newegg Price'].str.replace('[$,]', '', regex=True), errors='coerce')
 df['Microless Price'] = pd.to_numeric(df['Microless Price'].str.replace('[$,]', '', regex=True), errors='coerce')
-
-
-# Step 3 -- > Calculate the price range of the products
-#------------------------------------------------------------------------------------------
-#------------------------------------------------------------------------------------------
-
-
-#new_df = pd.DataFrame(new_products)
-#df = pd.concat([df,new_df],ignore_index=True)
 for i, row in df.iterrows():
     if pd.isna(row['Newegg Price']) and pd.isna(row['Microless Price']):
         df.at[i, 'Min price(Shops)'] = '_'
@@ -127,27 +128,12 @@ for i, row in df.iterrows():
         df.at[i, 'Min price(Shops)'] = row['Microless Price']
     else:
         df.at[i, 'Min price(Shops)'] = min(row['Newegg Price'], row['Microless Price'])
-def calculate_cp(min_price):
-    if min_price == '_':
-        return 1000
-    else:
-        return min_price * 0.55
-
 df['cp(min)'] = df['Min price(Shops)'].apply(lambda x: calculate_cp(x) if x != '_' else 1000)
-cs=5
-cm=10
-P=1.1
-def calculate_base_price(cp):
-    return (cp + 15)
-def sell_price(cp):
-    return ((cp + 15) * 1.1)
-df['base price'] = df['cp(min)'].apply(sell_price)
+df['base price'] = df['cp(min)'].apply(calculate_base_price)
 df['sell price'] = df['base price'].apply(sell_price)
-def is_competitive(row):
-    if row['Min price(Shops)'] == '_':
-        return 'No'
-    return 'Yes' if row['cp(min)'] <= row['sell price'] <= row['Min price(Shops)'] else 'No'
 df['competitive'] = df.apply(is_competitive, axis=1)
-
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+# new_df = pd.DataFrame(new_products)
+# df = pd.concat([df,new_df],ignore_index=True)
+# more options can be specified also
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
     print(df)
