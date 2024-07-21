@@ -3,6 +3,11 @@ import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
 
+# Step 1 -- > Create a database 
+#------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
+
+
 # Define phone lists
 common_phones = [
     "Samsung Galaxy A15 5G 128GB Blue Black",
@@ -20,7 +25,6 @@ only_microless = [
     "HUAWEI nova 11i SmartPhone",
     "vivo V30 5G",
     "Samsung Galaxy Z Flip6 AI Smartphone",
-    "HUAWEI nova 10 Pro Dual SIM Smartphone, 6.7 120 Hz Curved Display, Star Orbit Ring Design, 8GB RAM, 256GB Storage, 4G LTE Network, 60 MP/50MP Camera, 4500 mAh Battery, Starry Black | 51097EWH",
 ]
 only_newegg = [
     "Apple iPhone 13 Pro Max, 128GB, Graphite - Unlocked",
@@ -38,7 +42,13 @@ df = pd.DataFrame(phone_names, columns=["Phone names"])
 df["Newegg Price"] = "N/A"
 df["Microless Price"] = "N/A"
 
-# Functions to scrape prices
+
+# Step 2 -- > Define functions to scrape the websites
+#------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
+
+
+# Scraping newegg.com
 def scrape_newegg(phone_name):
     url = f"https://www.newegg.com/p/pl?d={phone_name.replace(' ', '+')}"
     response = requests.get(url)
@@ -56,7 +66,7 @@ def scrape_newegg(phone_name):
 
     return 'N/A'
 
-#Function to scrape microless.com
+#Scraping microless.com
 def scrape_microless(phone_name):
     url = f"https://global.microless.com/search/?query={phone_name.replace(' ', '+')}"
     response = requests.get(url)
@@ -97,4 +107,65 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         df.loc[df['Phone names'] == phone_name, 'Newegg Price'] = newegg_price
         df.loc[df['Phone names'] == phone_name, 'Microless Price'] = microless_price
 
-print(df)
+
+# Cleaning price columns and converting to numeric
+df['Newegg Price'] = pd.to_numeric(df['Newegg Price'].str.replace('[$,]', '', regex=True), errors='coerce')
+df['Microless Price'] = pd.to_numeric(df['Microless Price'].str.replace('[$,]', '', regex=True), errors='coerce')
+
+
+# Step 3 -- > Calculate the price range of the products
+#------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
+
+df.to_csv('products_data.csv')
+
+cs = 15 
+cm = 6
+p = 10   
+
+df['Manual Price'] = None
+
+new_products = [
+    {"Phone names":"Original LG Smart Folder 4G LTE Mobile Phone Unlocked LG X100 3.3'' 2GB RAM 16GB ROM 4.9MP Camera FM Radio Android SmartPhone" , "Newegg Price": None, "Microless Price": None, "Manual Price": 139.00},
+    {"Phone names":"HTC Status ChaCha A810a Unlocked Phone with QWERTY Keyboard, 5MP Camera, Wi-Fi and GPS - US Warranty - Silver" , "Newegg Price": None, "Microless Price": None, "Manual Price": 123.52},
+    {"Phone names": "Sony Ericsson Xperia X10 Mini E10i", "Newegg Price": None, "Microless Price": None, "Manual Price": 199.99},
+    {"Phone names": "ASUS Phone ZA550KL-S425-1G16G-BK Zenfone Live L1 5.45 1GB 16GB Black Retail", "Newegg Price": None, "Microless Price": None, "Manual Price": 109.99}
+]
+
+new_df = pd.DataFrame(new_products)
+df = pd.concat([df, new_df], ignore_index=True)
+
+df['Product Price'] = df[['Newegg Price', 'Microless Price', 'Manual Price']].min(axis=1)
+df['Shipping Cost'] = cs
+df['Marketing Cost'] = cm
+df['Profit'] = 0
+df['Final Price'] = 0
+
+for i, row in df.iterrows():
+
+    cp = row['Product Price']
+
+    base_price = cp + cs + cm 
+    profit = base_price * (p / 100)
+    final_price = base_price + profit
+
+    min_competitor_price = row[['Newegg Price', 'Microless Price']].min()
+    max_competitor_price = row[['Newegg Price', 'Microless Price']].max()
+    min_price_range = base_price
+    max_price_range = min_competitor_price
+    
+    df.at[i, 'Final Price'] = final_price
+    
+    if pd.notna(min_competitor_price) and pd.notna(max_competitor_price):
+        if min_competitor_price <= final_price <= max_competitor_price:
+            df.at[i, 'Competitive Status'] = 'Competitive'
+        else:
+            df.at[i, 'Competitive Status'] = 'Not Competitive'
+    else:
+        df.at[i, 'Competitive Status'] = 'Manual Pricing'
+
+result_df = df[['Phone names', 'Final Price', 'Competitive Status']]
+
+print(result_df.head(20))
+
+result_df.to_csv('final_prices_with_status.csv', index=False)

@@ -38,10 +38,9 @@ def scrape_newegg(phone_name):
         price_tag = soup2.find('li', class_='price-current')
 
         if price_tag:
-            return price_tag.text.strip()
-        #product_storage = 
+            return price_tag.text.strip() 
     
-    return 'N/A'
+    return None
 
 # Dictionary to hold phone information
 phone_info = {} 

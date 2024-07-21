@@ -2,7 +2,7 @@ import pandas as pd
 
 df = pd.read_csv('products_data.csv')
 
-cs = 15
+cs = 15 
 cm = 6
 p = 10   
 
@@ -18,14 +18,14 @@ new_products = [
 new_df = pd.DataFrame(new_products)
 df = pd.concat([df, new_df], ignore_index=True)
 
-df['Cost Price'] = df[['Newegg Price', 'Microless Price', 'Manual Price']].min(axis=1)
+df['Product Price'] = df[['Newegg Price', 'Microless Price', 'Manual Price']].min(axis=1)
 df['Shipping Cost'] = cs
 df['Marketing Cost'] = cm
 df['Profit'] = 0
 df['Final Price'] = 0
 
 for i, row in df.iterrows():
-    cp = row['Cost Price']
+    cp = row['Product Price']
     min_competitor_price = row[['Newegg Price', 'Microless Price']].min()
     max_competitor_price = row[['Newegg Price', 'Microless Price']].max()
     
