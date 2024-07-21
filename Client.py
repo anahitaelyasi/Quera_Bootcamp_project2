@@ -19,7 +19,7 @@ def receive_all(sock):
 
 def request_data_from_server(phone_names):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('127.0.0.1', 9999))
+    client.connect(('127.0.0.1', 8080))
     request = json.dumps(phone_names)
     client.send(request.encode('utf-8'))
     response = receive_all(client)
