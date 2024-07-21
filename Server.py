@@ -74,7 +74,7 @@ def is_competitive(row):
 # -------------------------------------------------------
 
 def handle_client(client_socket):
-    request = client_socket.recv(4096)
+    request = client_socket.recv(8080)
     phone_names = json.loads(request.decode('utf-8'))
     df = pd.DataFrame(phone_names, columns=["Phone names"])
     df["Newegg Price"] = "0"
@@ -109,9 +109,9 @@ def handle_client(client_socket):
 # -------------------------------------------------------
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('0.0.0.0', 9999))
+server.bind(('0.0.0.0', 8080))
 server.listen(5)
-print("Server listening on port 9999")
+print("Server listening on port 8080")
 while True:
     client_socket, addr = server.accept()
     print(f"Accepted connection from {addr}")
